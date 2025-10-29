@@ -1,22 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍟 فست فود سالیوان | منوی دیجیتال
 
-## Getting Started
+منوی دیجیتال مدرن برای فست فود سالیوان با قابلیت سفارش آنلاین و مدیریت کامل رستوران
 
-First, run the development server:
+## 📍 اطلاعات رستوران
+
+**نام:** فست فود سالیوان  
+**تلفن:** +989122995956  
+**آدرس:** تهران، چهاردانگه، اول خیابان شهید هیدخ، بالای داروخانه دکتر اشرفی، پ 216
+
+## 🚀 راه‌اندازی سریع
 
 ```bash
+# نصب dependencies
+npm install
+
+# راه‌اندازی دیتابیس
+npx prisma generate
+npx prisma migrate dev
+npm run db:seed
+
+# اجرای سرور
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+سپس [http://localhost:3000](http://localhost:3000) را در مرورگرتان باز کنید.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ ویژگی‌های کلیدی
+
+- 📱 **رابط کاربری RTL** با پشتیبانی کامل از فارسی
+- 🛒 **سبد خرید هوشمند** با zustand state management  
+- 🍕 **منوی تعاملی** با دسته‌بندی و تصاویر
+- 📊 **پنل مدیریت کامل** برای سفارشات و منو
+- 🖨️ **چاپ رسید** برای سفارشات
+- 📋 **مدیریت میزها و مشتریان**
+- 📊 **گزارش‌گیری فروش**
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
 

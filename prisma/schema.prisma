@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Authentication Models
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  phone         String    @unique // Primary identifier
+  phoneVerified Boolean   @default(false)
+  image         String?
+  role          String    @default("CUSTOMER") // CUSTOMER, STAFF, ADMIN
+  username      String?   @unique // For admin/staff
+  password      String? // For admin/staff
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String // Phone number
+  value      String // OTP code
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+
+  @@map("verification")
+}
+
+// Menu Models
+model Category {
+  id            String            @id @default(cuid())
+  name          String
+  emoji         String?
+  order         Int               @default(0)
+  isActive      Boolean           @default(true)
+  availableFrom String? // "08:00"
+  availableTo   String? // "24:00"
+  menuItems     MenuItem[]
+  printers      PrinterCategory[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@map("categories")
+}
+
+model MenuItem {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  price       Int
+  image       String?
+  order       Int         @default(0)
+  isActive    Boolean     @default(true)
+  isAvailable Boolean     @default(true)
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("menu_items")
+}
+
+// Customer Models
+model Customer {
+  id             String   @id @default(cuid())
+  name           String
+  lastName       String?
+  phone          String   @unique
+  membershipCode String   @unique
+  address        String?
+  totalOrders    Int      @default(0)
+  totalSpent     Float    @default(0)
+  isActive       Boolean  @default(true)
+  orders         Order[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("customers")
+}
+
+// Printer Models
+model Printer {
+  id          String            @id @default(cuid())
+  name        String // مثل "صندوق", "آشپزخانه", "بار"
+  description String?
+  ipAddress   String
+  port        Int               @default(9100)
+  isOnline    Boolean           @default(false)
+  isActive    Boolean           @default(true)
+  categories  PrinterCategory[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("printers")
+}
+
+model PrinterCategory {
+  id         String   @id @default(cuid())
+  printerId  String
+  categoryId String
+  printer    Printer  @relation(fields: [printerId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([printerId, categoryId])
+  @@map("printer_categories")
+}
+
+// Table Models
+model Table {
+  id        String   @id @default(cuid())
+  number    Int      @unique
+  name      String // مثل "میز 4" یا "A4"
+  capacity  Int      @default(4)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+
+  @@map("tables")
+}
+
+// Order Models
+model Order {
+  id          String      @id @default(cuid())
+  orderNumber String      @unique @default(cuid()) // Use cuid for SQLite
+  customerId  String?
+  customer    Customer?   @relation(fields: [customerId], references: [id])
+  phone       String
+  orderType   String // DELIVERY, PICKUP, DINE_IN
+  address     String?
+  notes       String?
+  tableId     String? // برای سفارشات حضوری
+  table       Table?      @relation(fields: [tableId], references: [id])
+  items       OrderItem[]
+  totalAmount Int
+  status      String      @default("PENDING") // PENDING, CONFIRMED, PREPARING, READY, DELIVERED, CANCELLED
+  createdBy   String?
+  updatedBy   String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  completedAt DateTime?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String    @id @default(cuid())
+  orderId    String
+  order      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String?
+  menuItem   MenuItem? @relation(fields: [menuItemId], references: [id])
+  name       String
+  price      Int
+  quantity   Int
+  image      String?
+
+  @@map("order_items")
+}

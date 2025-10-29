@@ -1,1 +1,68 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dana font-face - adjust paths for Next.js public folder */
+@font-face {
+  font-family: 'Dana';
+  src: url('/fonts/dana/woff2/Dana-Regular.woff2') format('woff2'),
+       url('/fonts/dana/woff/Dana-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Dana';
+  src: url('/fonts/dana/woff2/Dana-Bold.woff2') format('woff2'),
+       url('/fonts/dana/woff/Dana-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --radius: 1rem;
+  --background: #111212;
+  --foreground: #fff;
+  --card: #18191a;
+  --card-foreground: #fff;
+  --popover: #18191a;
+  --popover-foreground: #fff;
+  --primary: #ff9800;
+  --primary-foreground: #18191a;
+  --secondary: #232323;
+  --secondary-foreground: #fff;
+  --muted: #232323;
+  --muted-foreground: #bdbdbd;
+  --accent: #ff9800;
+  --accent-foreground: #fff;
+  --destructive: #e53935;
+  --border: #232323;
+  --input: #232323;
+  --ring: #ff9800;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Dana', ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  display: hidden;
+  background: transparent;
+  border-radius: 4px;
+  padding: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
