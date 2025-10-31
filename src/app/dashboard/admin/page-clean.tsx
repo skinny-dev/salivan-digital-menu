@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import OrderPanel from "../../components/orderPanel";
@@ -134,18 +134,8 @@ export default function AdminDashboard() {
   
   const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/dashboard/login");
-      return;
-    }
-
-    fetchOrders();
-    fetchMenu();
-  }, [router]);
-
-  const fetchOrders = async () => {
+   
+  const fetchOrders = useCallback(async () => {
     try {
       const response = await fetch("/api/orders");
       if (response.ok) {
@@ -157,9 +147,10 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
 
-  const fetchMenu = async () => {
+  }, []);
+
+  const fetchMenu = useCallback(async () => {
     try {
       setMenuLoading(true);
       const response = await fetch("/api/admin/categories");
@@ -175,7 +166,19 @@ export default function AdminDashboard() {
     } finally {
       setMenuLoading(false);
     }
-  };
+
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/dashboard/login");
+      return;
+    }
+
+    fetchOrders();
+    fetchMenu();
+  }, [router, fetchOrders, fetchMenu]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -499,11 +502,10 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="p-4">
-                            <OrderPanel
-                              orderId={order.id}
-                              currentStatus={order.status}
-                              onSubmit={handleOrderSubmit}
-                            />
+                            <div className="flex flex-col gap-2">
+                              <span className="text-sm text-zinc-400">#{order.orderNumber}</span>
+                              <span className="text-sm">{order.status}</span>
+                            </div>
                           </td>
                         </tr>
                       ))}

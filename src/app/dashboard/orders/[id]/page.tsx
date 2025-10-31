@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight,
@@ -52,14 +52,8 @@ export default function OrderDetails({
   const router = useRouter();
   const printRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    params.then(({ id }) => {
-      setOrderId(id);
-      fetchOrder(id);
-    });
-  }, [params]);
-
-  const fetchOrder = async (id: string) => {
+   
+  const fetchOrder = useCallback(async (id: string) => {
     try {
       const response = await fetch(`/api/orders/${id}`);
       if (response.ok) {
@@ -75,8 +69,14 @@ export default function OrderDetails({
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
+  useEffect(() => {
+    params.then(({ id }) => {
+      setOrderId(id);
+      fetchOrder(id);
+    });
+  }, [params, fetchOrder]);
   const updateOrderStatus = async (newStatus: string) => {
     if (!order) return;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import OrderPanel from "@/app/components/orderPanel";
@@ -58,14 +58,8 @@ export default function StaffDashboard() {
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    fetchOrders();
-    // Auto-refresh orders every 30 seconds
-    const interval = setInterval(fetchOrders, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchOrders = async () => {
+   
+  const fetchOrders = useCallback(async () => {
     try {
       const response = await fetch("/api/orders");
       if (response.ok) {
@@ -79,7 +73,15 @@ export default function StaffDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+
+  }, [router]);
+
+  useEffect(() => {
+    fetchOrders();
+    // Auto-refresh orders every 30 seconds
+    const interval = setInterval(fetchOrders, 30000);
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {

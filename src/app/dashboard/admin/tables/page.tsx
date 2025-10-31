@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -45,11 +45,8 @@ export default function TableManagement() {
   });
   const router = useRouter();
 
-  useEffect(() => {
-    fetchTables();
-  }, []);
-
-  const fetchTables = async () => {
+   
+  const fetchTables = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/tables");
       if (response.ok) {
@@ -63,7 +60,11 @@ export default function TableManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchTables();
+  }, [fetchTables]);
 
   const handleAddTable = async () => {
     try {

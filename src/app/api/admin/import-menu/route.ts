@@ -448,7 +448,7 @@ export async function POST(request: NextRequest) {
             name: item.name,
             description: item.description,
             price: item.price,
-            image: item.image || null,
+            image: (item as any).image || null,
             order: itemOrder++,
             isActive: true,
             isAvailable: true,

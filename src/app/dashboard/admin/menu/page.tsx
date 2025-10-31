@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ImageUpload from "../../../components/imageUpload";
@@ -94,11 +94,8 @@ export default function MenuManagement() {
   });
   const router = useRouter();
 
-  useEffect(() => {
-    fetchMenu();
-  }, []);
-
-  const fetchMenu = async () => {
+   
+  const fetchMenu = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/categories");
       if (response.ok) {
@@ -115,7 +112,11 @@ export default function MenuManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router, selectedCategory]);
+
+  useEffect(() => {
+    fetchMenu();
+  }, [fetchMenu]);
 
   const handleAddCategory = async () => {
     try {

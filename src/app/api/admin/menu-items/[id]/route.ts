@@ -5,7 +5,7 @@ import { verifyToken } from "@/lib/auth";
 // PUT - Update menu item
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const token = req.cookies.get("auth-token")?.value;
@@ -33,7 +33,7 @@ export async function PUT(
       categoryId,
     } = body;
 
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (name !== undefined) updateData.name = name;
     if (description !== undefined) updateData.description = description;
     if (price !== undefined) updateData.price = parseInt(price);
@@ -43,8 +43,9 @@ export async function PUT(
     if (isAvailable !== undefined) updateData.isAvailable = isAvailable;
     if (categoryId !== undefined) updateData.categoryId = categoryId;
 
+    const resolvedParams = await params;
     const menuItem = await prisma.menuItem.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: updateData,
     });
 
@@ -61,7 +62,7 @@ export async function PUT(
 // DELETE - Delete menu item
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const token = req.cookies.get("auth-token")?.value;
@@ -77,8 +78,9 @@ export async function DELETE(
       );
     }
 
+    const resolvedParams = await params;
     await prisma.menuItem.delete({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
     });
 
     return NextResponse.json({ message: "Menu item deleted successfully" });

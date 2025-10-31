@@ -4,7 +4,7 @@ import { verifyToken } from "@/lib/auth";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const token = request.cookies.get("auth-token")?.value;
@@ -21,7 +21,8 @@ export async function PUT(
     }
 
     const { number, name, capacity, isActive } = await request.json();
-    const tableId = params.id;
+    const resolvedParams = await params;
+    const tableId = resolvedParams.id;
 
     // Check if new number conflicts with existing table (excluding current table)
     if (number) {
@@ -62,7 +63,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const token = request.cookies.get("auth-token")?.value;
@@ -78,7 +79,8 @@ export async function DELETE(
       );
     }
 
-    const tableId = params.id;
+    const resolvedParams = await params;
+    const tableId = resolvedParams.id;
 
     // Check if table has any orders
     const ordersCount = await prisma.order.count({

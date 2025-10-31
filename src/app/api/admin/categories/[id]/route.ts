@@ -5,7 +5,7 @@ import { verifyToken } from "@/lib/auth";
 // PUT - Update category
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const token = req.cookies.get("auth-token")?.value;
@@ -23,9 +23,10 @@ export async function PUT(
 
     const body = await req.json();
     const { name, emoji, order, isActive, availableFrom, availableTo } = body;
+    const resolvedParams = await params;
 
     const category = await prisma.category.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         ...(name !== undefined && { name }),
         ...(emoji !== undefined && { emoji }),
@@ -49,7 +50,7 @@ export async function PUT(
 // DELETE - Delete category
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const token = req.cookies.get("auth-token")?.value;
@@ -65,9 +66,11 @@ export async function DELETE(
       );
     }
 
+    const resolvedParams = await params;
+
     // Check if category has menu items
     const menuItemsCount = await prisma.menuItem.count({
-      where: { categoryId: params.id },
+      where: { categoryId: resolvedParams.id },
     });
 
     if (menuItemsCount > 0) {
@@ -78,7 +81,7 @@ export async function DELETE(
     }
 
     await prisma.category.delete({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
     });
 
     return NextResponse.json({ message: "Category deleted successfully" });

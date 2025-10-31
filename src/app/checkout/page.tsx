@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/cart-store";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import CheckOutAside from "../components/checkoutAside";
 import CheckoutBar from "../components/checkoutBar";
-import Image from "next/image";
 import QuantitySelector from "../components/quantitySelector";
 import { Skeleton } from "../components/ui/skeleton";
 import LoadingImage from "../components/loadingImage";

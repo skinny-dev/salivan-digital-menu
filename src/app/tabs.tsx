@@ -2,7 +2,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import Papa from "papaparse";
-import Image from "next/image";
 import { Skeleton } from "./components/ui/skeleton";
 import LoadingImage from "./components/loadingImage";
 

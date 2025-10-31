@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import OrderPanel from "../../components/orderPanel";
@@ -168,13 +168,8 @@ export default function AdminDashboard() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    fetchOrders();
-    fetchMenu();
-    fetchTables();
-  }, []);
-
-  const fetchOrders = async () => {
+   
+  const fetchOrders = useCallback(async () => {
     try {
       const response = await fetch("/api/orders");
       if (response.ok) {
@@ -188,7 +183,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
@@ -237,7 +232,7 @@ export default function AdminDashboard() {
   };
 
   // Menu functions
-  const fetchMenu = async () => {
+  const fetchMenu = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/categories");
       if (response.ok) {
@@ -254,7 +249,7 @@ export default function AdminDashboard() {
     } finally {
       setMenuLoading(false);
     }
-  };
+  }, [router, selectedCategory]);
 
   const handleAddCategory = async () => {
     try {
@@ -408,7 +403,7 @@ export default function AdminDashboard() {
   };
 
   // Table management functions
-  const fetchTables = async () => {
+  const fetchTables = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/tables");
       if (response.ok) {
@@ -420,7 +415,13 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Error fetching tables:", error);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchOrders();
+    fetchMenu();
+    fetchTables();
+  }, [fetchOrders, fetchMenu, fetchTables]);
 
   const handleAddTable = async () => {
     try {
