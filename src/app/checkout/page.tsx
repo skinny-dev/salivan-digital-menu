@@ -247,9 +247,7 @@ export default function CheckoutPage() {
                     className="flex items-center gap-3 bg-zinc-900 p-3 rounded-lg"
                   >
                     <LoadingImage
-                      src={`/images/${
-                        item.image?.replace(/^\.\//, "") || "default.jpg"
-                      }`}
+                      src={item.image ?? ""}
                       alt={item.name}
                       width={48}
                       height={48}

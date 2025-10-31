@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Skeleton } from "./ui/skeleton";
+import { FALLBACK_MENU_IMAGE, resolveMenuImageSrc } from "../lib/utils";
 
 interface LoadingImageProps {
   src: string;
@@ -21,6 +22,7 @@ export default function LoadingImage({
 }: LoadingImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const normalizedSrc = resolveMenuImageSrc(src);
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -35,7 +37,7 @@ export default function LoadingImage({
     <div className="relative">
       {isLoading && <Skeleton className={`absolute inset-0 ${className}`} />}
       <Image
-        src={hasError ? "/images/default.jpg" : src}
+        src={hasError ? FALLBACK_MENU_IMAGE : normalizedSrc}
         alt={alt}
         width={width}
         height={height}

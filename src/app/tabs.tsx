@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import Papa from "papaparse";
 import { Skeleton } from "./components/ui/skeleton";
 import LoadingImage from "./components/loadingImage";
+import { resolveMenuImageSrc } from "./lib/utils";
 
 // Define a type for spreadsheet rows
 type MenuItem = Record<string, string>;
@@ -83,14 +84,17 @@ export default function TabsExample() {
             </div>
           ))}
         </div>
-        
+
         {/* Menu items skeleton - exact same responsive grid layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="flex flex-row items-center justify-between rounded-2xl bg-zinc-900 p-4 gap-4 shadow-none">
+            <div
+              key={i}
+              className="flex flex-row items-center justify-between rounded-2xl bg-zinc-900 p-4 gap-4 shadow-none"
+            >
               {/* Image skeleton - exact same size */}
               <Skeleton className="rounded-full border-2 border-[#232323] w-[80px] h-[80px] flex-shrink-0" />
-              
+
               {/* Text content skeleton - exact same layout */}
               <div className="flex flex-col flex-1 gap-1 items-start text-start">
                 {/* Title skeleton - text-base font-bold */}
@@ -152,7 +156,7 @@ export default function TabsExample() {
               >
                 {/* Image */}
                 <LoadingImage
-                  src={`/images/${item["تصویر"].replace(/^\.\//, "")}`}
+                  src={resolveMenuImageSrc(item["تصویر"])}
                   alt={item["عنوان"]}
                   width={80}
                   height={80}
