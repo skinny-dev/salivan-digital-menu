@@ -45,7 +45,6 @@ export default function TableManagement() {
   });
   const router = useRouter();
 
-   
   const fetchTables = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/tables");

@@ -57,13 +57,21 @@ export async function POST(request: NextRequest) {
         tableId: orderType === "DINE_IN" ? tableId : null,
         createdBy: user.id,
         items: {
-          create: items.map((item: { name: string; price: number; quantity: number; image?: string; menuItemId: string }) => ({
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            image: item.image,
-            menuItemId: item.menuItemId,
-          })),
+          create: items.map(
+            (item: {
+              name: string;
+              price: number;
+              quantity: number;
+              image?: string;
+              menuItemId: string;
+            }) => ({
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+              image: item.image,
+              menuItemId: item.menuItemId,
+            })
+          ),
         },
       },
       include: {

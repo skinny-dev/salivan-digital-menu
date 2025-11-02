@@ -52,24 +52,26 @@ export default function OrderDetails({
   const router = useRouter();
   const printRef = useRef<HTMLDivElement>(null);
 
-   
-  const fetchOrder = useCallback(async (id: string) => {
-    try {
-      const response = await fetch(`/api/orders/${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setOrder(data);
-      } else if (response.status === 401) {
-        router.push("/dashboard/login");
-      } else {
-        router.push("/dashboard/admin");
+  const fetchOrder = useCallback(
+    async (id: string) => {
+      try {
+        const response = await fetch(`/api/orders/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setOrder(data);
+        } else if (response.status === 401) {
+          router.push("/dashboard/login");
+        } else {
+          router.push("/dashboard/admin");
+        }
+      } catch (error) {
+        console.error("Error fetching order:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching order:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [router]);
+    },
+    [router]
+  );
 
   useEffect(() => {
     params.then(({ id }) => {

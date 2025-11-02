@@ -25,13 +25,13 @@ export default function Home() {
           className="flex w-full bg-neutral-900 items-center justify-center text-sm p-4 mt-2 gap-2"
           dir="rtl"
         >
-            <span>طراحی شده توسط</span>
-            <Link
-              className="text-blue-400 font-bold"
-              href="https://t.me/skinnypicha"
-            >
-              علیرضا خدابخش
-            </Link>
+          <span>طراحی شده توسط</span>
+          <Link
+            className="text-blue-400 font-bold"
+            href="https://t.me/skinnypicha"
+          >
+            علیرضا خدابخش
+          </Link>
         </div>
       </div>
     </div>

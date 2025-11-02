@@ -94,7 +94,6 @@ export default function MenuManagement() {
   });
   const router = useRouter();
 
-   
   const fetchMenu = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/categories");

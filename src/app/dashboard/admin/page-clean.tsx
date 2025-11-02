@@ -110,7 +110,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState("today");
   const [activeTab, setActiveTab] = useState("orders");
-  
+
   // Menu states
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -131,10 +131,9 @@ export default function AdminDashboard() {
     price: "",
     image: "",
   });
-  
+
   const router = useRouter();
 
-   
   const fetchOrders = useCallback(async () => {
     try {
       const response = await fetch("/api/orders");
@@ -147,7 +146,6 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-
   }, []);
 
   const fetchMenu = useCallback(async () => {
@@ -166,7 +164,6 @@ export default function AdminDashboard() {
     } finally {
       setMenuLoading(false);
     }
-
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -192,7 +189,7 @@ export default function AdminDashboard() {
   const filteredOrders = orders.filter((order) => {
     const today = new Date();
     const orderDate = new Date(order.createdAt);
-    
+
     if (dateFilter === "today") {
       return orderDate.toDateString() === today.toDateString();
     } else if (dateFilter === "yesterday") {
@@ -200,7 +197,7 @@ export default function AdminDashboard() {
       yesterday.setDate(yesterday.getDate() - 1);
       return orderDate.toDateString() === yesterday.toDateString();
     }
-    
+
     return true;
   });
 
@@ -217,7 +214,12 @@ export default function AdminDashboard() {
       if (response.ok) {
         await fetchMenu();
         setShowAddCategory(false);
-        setCategoryForm({ name: "", emoji: "", availableFrom: "09:00", availableTo: "23:00" });
+        setCategoryForm({
+          name: "",
+          emoji: "",
+          availableFrom: "09:00",
+          availableTo: "23:00",
+        });
       }
     } catch (error) {
       console.error("Error adding category:", error);
@@ -367,7 +369,7 @@ export default function AdminDashboard() {
         <div className="w-64 bg-zinc-900 border-r border-zinc-800">
           <div className="p-6">
             <h1 className="text-xl font-bold mb-8">پنل مدیریت</h1>
-            
+
             {/* Tab Navigation */}
             <nav className="space-y-2 mb-8">
               <button
@@ -381,7 +383,7 @@ export default function AdminDashboard() {
                 <ShoppingCart size={20} />
                 سفارشات
               </button>
-              
+
               <button
                 onClick={() => setActiveTab("menu")}
                 className={`w-full text-right p-3 rounded-lg flex items-center gap-3 transition-colors ${
@@ -403,7 +405,7 @@ export default function AdminDashboard() {
                 <Settings size={20} />
                 تنظیمات
               </Link>
-              
+
               <button
                 onClick={handleLogout}
                 className="w-full text-right flex items-center gap-3 p-3 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
@@ -455,9 +457,13 @@ export default function AdminDashboard() {
                       {filteredOrders.map((order) => (
                         <tr key={order.id} className="border-b border-zinc-800">
                           <td className="p-4">
-                            {new Date(order.createdAt).toLocaleDateString("fa-IR")}
+                            {new Date(order.createdAt).toLocaleDateString(
+                              "fa-IR"
+                            )}
                             <div className="text-xs text-zinc-400">
-                              {new Date(order.createdAt).toLocaleTimeString("fa-IR")}
+                              {new Date(order.createdAt).toLocaleTimeString(
+                                "fa-IR"
+                              )}
                             </div>
                           </td>
                           <td className="p-4">
@@ -467,29 +473,51 @@ export default function AdminDashboard() {
                             </div>
                           </td>
                           <td className="p-4">
-                            <span className={`px-2 py-1 rounded-full text-xs ${statusColors[order.status as keyof typeof statusColors]}`}>
-                              {statusNames[order.status as keyof typeof statusNames]}
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs ${
+                                statusColors[
+                                  order.status as keyof typeof statusColors
+                                ]
+                              }`}
+                            >
+                              {
+                                statusNames[
+                                  order.status as keyof typeof statusNames
+                                ]
+                              }
                             </span>
                           </td>
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              {order.orderType === 'DELIVERY' ? (
+                              {order.orderType === "DELIVERY" ? (
                                 <>
                                   <MapPin size={16} className="text-zinc-400" />
-                                  <span className="text-sm">{order.address}</span>
+                                  <span className="text-sm">
+                                    {order.address}
+                                  </span>
                                 </>
                               ) : (
                                 <>
-                                  <Package size={16} className="text-zinc-400" />
-                                  <span className="text-sm">میز {order.table?.number}</span>
+                                  <Package
+                                    size={16}
+                                    className="text-zinc-400"
+                                  />
+                                  <span className="text-sm">
+                                    میز {order.table?.number}
+                                  </span>
                                 </>
                               )}
                             </div>
                           </td>
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              <DollarSign size={16} className="text-green-400" />
-                              <span className="font-medium">{order.totalAmount.toLocaleString()} تومان</span>
+                              <DollarSign
+                                size={16}
+                                className="text-green-400"
+                              />
+                              <span className="font-medium">
+                                {order.totalAmount.toLocaleString()} تومان
+                              </span>
                             </div>
                           </td>
                           <td className="p-4">
@@ -503,7 +531,9 @@ export default function AdminDashboard() {
                           </td>
                           <td className="p-4">
                             <div className="flex flex-col gap-2">
-                              <span className="text-sm text-zinc-400">#{order.orderNumber}</span>
+                              <span className="text-sm text-zinc-400">
+                                #{order.orderNumber}
+                              </span>
                               <span className="text-sm">{order.status}</span>
                             </div>
                           </td>
@@ -551,19 +581,32 @@ export default function AdminDashboard() {
                       }`}
                     >
                       {editingCategory === category.id ? (
-                        <div className="h-full flex flex-col justify-between" onClick={(e) => e.stopPropagation()}>
+                        <div
+                          className="h-full flex flex-col justify-between"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <div className="space-y-1">
                             <input
                               type="text"
                               value={categoryForm.emoji}
-                              onChange={(e) => setCategoryForm(prev => ({ ...prev, emoji: e.target.value }))}
+                              onChange={(e) =>
+                                setCategoryForm((prev) => ({
+                                  ...prev,
+                                  emoji: e.target.value,
+                                }))
+                              }
                               placeholder="ایموجی"
                               className="w-full px-2 py-1 bg-zinc-800 border border-zinc-600 rounded text-xs"
                             />
                             <input
                               type="text"
                               value={categoryForm.name}
-                              onChange={(e) => setCategoryForm(prev => ({ ...prev, name: e.target.value }))}
+                              onChange={(e) =>
+                                setCategoryForm((prev) => ({
+                                  ...prev,
+                                  name: e.target.value,
+                                }))
+                              }
                               placeholder="نام دسته‌بندی"
                               className="w-full px-2 py-1 bg-zinc-800 border border-zinc-600 rounded text-xs"
                             />
@@ -616,8 +659,12 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                           <div className="flex flex-col items-center justify-center flex-1">
-                            <span className="text-2xl mb-1">{category.emoji}</span>
-                            <h3 className="font-medium text-sm truncate w-full">{category.name}</h3>
+                            <span className="text-2xl mb-1">
+                              {category.emoji}
+                            </span>
+                            <h3 className="font-medium text-sm truncate w-full">
+                              {category.name}
+                            </h3>
                             <p className="text-xs text-zinc-400 mt-1">
                               ({category.menuItems?.length || 0})
                             </p>
@@ -633,7 +680,9 @@ export default function AdminDashboard() {
               {selectedCategory && (
                 <div>
                   {(() => {
-                    const currentCategory = categories.find(c => c.id === selectedCategory);
+                    const currentCategory = categories.find(
+                      (c) => c.id === selectedCategory
+                    );
                     return (
                       <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-medium">
@@ -652,107 +701,131 @@ export default function AdminDashboard() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {categories
-                      .find(c => c.id === selectedCategory)
+                      .find((c) => c.id === selectedCategory)
                       ?.menuItems?.map((item) => (
-                      <div
-                        key={item.id}
-                        className="bg-zinc-800 rounded-lg p-4 group"
-                      >
-                        {editingMenuItem === item.id ? (
-                          <div className="space-y-3">
-                            <input
-                              type="text"
-                              value={menuItemForm.name}
-                              onChange={(e) => setMenuItemForm(prev => ({ ...prev, name: e.target.value }))}
-                              placeholder="نام آیتم"
-                              className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded"
-                            />
-                            <textarea
-                              value={menuItemForm.description}
-                              onChange={(e) => setMenuItemForm(prev => ({ ...prev, description: e.target.value }))}
-                              placeholder="توضیحات"
-                              className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded h-20 resize-none"
-                            />
-                            <input
-                              type="number"
-                              value={menuItemForm.price}
-                              onChange={(e) => setMenuItemForm(prev => ({ ...prev, price: e.target.value }))}
-                              placeholder="قیمت"
-                              className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded"
-                            />
-                            <input
-                              type="text"
-                              value={menuItemForm.image}
-                              onChange={(e) => setMenuItemForm(prev => ({ ...prev, image: e.target.value }))}
-                              placeholder="نام فایل تصویر"
-                              className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded"
-                            />
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => handleEditMenuItem(item.id)}
-                                className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded flex-1"
-                              >
-                                ذخیره
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setEditingMenuItem(null);
-                                  setMenuItemForm({
-                                    name: "",
-                                    description: "",
-                                    price: "",
-                                    image: "",
-                                  });
-                                }}
-                                className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded flex-1"
-                              >
-                                لغو
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="flex items-start justify-between mb-3">
-                              <div className="flex-1">
-                                <h3 className="font-medium">{item.name}</h3>
-                                <p className="text-sm text-zinc-400 mt-1">
-                                  {item.description}
-                                </p>
-                                <p className="text-green-400 font-medium mt-2">
-                                  {item.price?.toLocaleString()} تومان
-                                </p>
-                              </div>
-                              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div
+                          key={item.id}
+                          className="bg-zinc-800 rounded-lg p-4 group"
+                        >
+                          {editingMenuItem === item.id ? (
+                            <div className="space-y-3">
+                              <input
+                                type="text"
+                                value={menuItemForm.name}
+                                onChange={(e) =>
+                                  setMenuItemForm((prev) => ({
+                                    ...prev,
+                                    name: e.target.value,
+                                  }))
+                                }
+                                placeholder="نام آیتم"
+                                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded"
+                              />
+                              <textarea
+                                value={menuItemForm.description}
+                                onChange={(e) =>
+                                  setMenuItemForm((prev) => ({
+                                    ...prev,
+                                    description: e.target.value,
+                                  }))
+                                }
+                                placeholder="توضیحات"
+                                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded h-20 resize-none"
+                              />
+                              <input
+                                type="number"
+                                value={menuItemForm.price}
+                                onChange={(e) =>
+                                  setMenuItemForm((prev) => ({
+                                    ...prev,
+                                    price: e.target.value,
+                                  }))
+                                }
+                                placeholder="قیمت"
+                                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded"
+                              />
+                              <input
+                                type="text"
+                                value={menuItemForm.image}
+                                onChange={(e) =>
+                                  setMenuItemForm((prev) => ({
+                                    ...prev,
+                                    image: e.target.value,
+                                  }))
+                                }
+                                placeholder="نام فایل تصویر"
+                                className="w-full px-3 py-2 bg-zinc-700 border border-zinc-600 rounded"
+                              />
+                              <div className="flex gap-2">
                                 <button
-                                  onClick={() => startEditingMenuItem(item)}
-                                  className="text-blue-400 hover:text-blue-300"
+                                  onClick={() => handleEditMenuItem(item.id)}
+                                  className="bg-green-600 hover:bg-green-700 px-3 py-2 rounded flex-1"
                                 >
-                                  <Edit2 size={16} />
+                                  ذخیره
                                 </button>
                                 <button
-                                  onClick={() => handleDeleteMenuItem(item.id)}
-                                  className="text-red-400 hover:text-red-300"
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            </div>
-                            {item.image && (
-                              <div className="w-full h-32 bg-zinc-700 rounded overflow-hidden">
-                                <img
-                                  src={`/images/${item.image}`}
-                                  alt={item.name}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    (e.target as HTMLImageElement).style.display = "none";
+                                  onClick={() => {
+                                    setEditingMenuItem(null);
+                                    setMenuItemForm({
+                                      name: "",
+                                      description: "",
+                                      price: "",
+                                      image: "",
+                                    });
                                   }}
-                                />
+                                  className="bg-gray-600 hover:bg-gray-700 px-3 py-2 rounded flex-1"
+                                >
+                                  لغو
+                                </button>
                               </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    ))}
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex-1">
+                                  <h3 className="font-medium">{item.name}</h3>
+                                  <p className="text-sm text-zinc-400 mt-1">
+                                    {item.description}
+                                  </p>
+                                  <p className="text-green-400 font-medium mt-2">
+                                    {item.price?.toLocaleString()} تومان
+                                  </p>
+                                </div>
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    onClick={() => startEditingMenuItem(item)}
+                                    className="text-blue-400 hover:text-blue-300"
+                                  >
+                                    <Edit2 size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteMenuItem(item.id)
+                                    }
+                                    className="text-red-400 hover:text-red-300"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </div>
+                              </div>
+                              {item.image && (
+                                <div className="w-full h-32 bg-zinc-700 rounded overflow-hidden">
+                                  <img
+                                    src={`/images/${item.image}`}
+                                    alt={item.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      (
+                                        e.target as HTMLImageElement
+                                      ).style.display = "none";
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      ))}
                   </div>
                 </div>
               )}
@@ -774,53 +847,79 @@ export default function AdminDashboard() {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">نام دسته‌بندی</label>
+                <label className="block text-sm font-medium mb-2">
+                  نام دسته‌بندی
+                </label>
                 <input
                   type="text"
                   value={categoryForm.name}
-                  onChange={(e) => setCategoryForm(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setCategoryForm((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
                   className="w-full p-3 bg-zinc-800 rounded-lg border border-zinc-700 focus:border-green-400 outline-none"
                   placeholder="مثال: پیش غذا"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-2">ایموجی</label>
                 <input
                   type="text"
                   value={categoryForm.emoji}
-                  onChange={(e) => setCategoryForm(prev => ({ ...prev, emoji: e.target.value }))}
+                  onChange={(e) =>
+                    setCategoryForm((prev) => ({
+                      ...prev,
+                      emoji: e.target.value,
+                    }))
+                  }
                   className="w-full p-3 bg-zinc-800 rounded-lg border border-zinc-700 focus:border-green-400 outline-none"
                   placeholder="🍕"
                 />
               </div>
-              
+
               <div className="flex gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-2">از ساعت</label>
+                  <label className="block text-sm font-medium mb-2">
+                    از ساعت
+                  </label>
                   <input
                     type="time"
                     value={categoryForm.availableFrom}
-                    onChange={(e) => setCategoryForm(prev => ({ ...prev, availableFrom: e.target.value }))}
+                    onChange={(e) =>
+                      setCategoryForm((prev) => ({
+                        ...prev,
+                        availableFrom: e.target.value,
+                      }))
+                    }
                     className="w-full p-3 bg-zinc-800 rounded-lg border border-zinc-700 focus:border-green-400 outline-none"
                   />
                 </div>
-                
+
                 <div className="flex-1">
-                  <label className="block text-sm font-medium mb-2">تا ساعت</label>
+                  <label className="block text-sm font-medium mb-2">
+                    تا ساعت
+                  </label>
                   <input
                     type="time"
                     value={categoryForm.availableTo}
-                    onChange={(e) => setCategoryForm(prev => ({ ...prev, availableTo: e.target.value }))}
+                    onChange={(e) =>
+                      setCategoryForm((prev) => ({
+                        ...prev,
+                        availableTo: e.target.value,
+                      }))
+                    }
                     className="w-full p-3 bg-zinc-800 rounded-lg border border-zinc-700 focus:border-green-400 outline-none"
                   />
                 </div>
               </div>
             </div>
-            
+
             <div className="flex gap-3 mt-6">
               <button
                 onClick={handleAddCategory}
@@ -852,46 +951,69 @@ export default function AdminDashboard() {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">نام آیتم</label>
+                <label className="block text-sm font-medium mb-2">
+                  نام آیتم
+                </label>
                 <input
                   type="text"
                   value={menuItemForm.name}
-                  onChange={(e) => setMenuItemForm(prev => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setMenuItemForm((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
                   className="w-full p-3 bg-zinc-800 rounded-lg border border-zinc-700 focus:border-green-400 outline-none"
                   placeholder="مثال: پیتزا مارگاریتا"
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-2">توضیحات</label>
+                <label className="block text-sm font-medium mb-2">
+                  توضیحات
+                </label>
                 <textarea
                   value={menuItemForm.description}
-                  onChange={(e) => setMenuItemForm(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e) =>
+                    setMenuItemForm((prev) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
                   className="w-full p-3 bg-zinc-800 rounded-lg border border-zinc-700 focus:border-green-400 outline-none h-24 resize-none"
                   placeholder="توضیحات آیتم..."
                 />
               </div>
-              
+
               <div>
-                <label className="block text-sm font-medium mb-2">قیمت (تومان)</label>
+                <label className="block text-sm font-medium mb-2">
+                  قیمت (تومان)
+                </label>
                 <input
                   type="number"
                   value={menuItemForm.price}
-                  onChange={(e) => setMenuItemForm(prev => ({ ...prev, price: e.target.value }))}
+                  onChange={(e) =>
+                    setMenuItemForm((prev) => ({
+                      ...prev,
+                      price: e.target.value,
+                    }))
+                  }
                   className="w-full p-3 bg-zinc-800 rounded-lg border border-zinc-700 focus:border-green-400 outline-none"
                   placeholder="150000"
                 />
               </div>
-              
+
               <ImageUpload
                 value={menuItemForm.image}
-                onChange={(filename) => setMenuItemForm(prev => ({ ...prev, image: filename }))}
+                onChange={(filename) =>
+                  setMenuItemForm((prev) => ({ ...prev, image: filename }))
+                }
               />
             </div>
-            
+
             <div className="flex gap-3 mt-6">
               <button
                 onClick={handleAddMenuItem}

@@ -168,7 +168,6 @@ export default function AdminDashboard() {
 
   const router = useRouter();
 
-   
   const fetchOrders = useCallback(async () => {
     try {
       const response = await fetch("/api/orders");
@@ -504,7 +503,7 @@ export default function AdminDashboard() {
   const filteredOrders = orders.filter((order) => {
     const orderDate = new Date(order.createdAt);
     const today = new Date();
-    
+
     if (dateFilter === "today") {
       return (
         orderDate.getFullYear() === today.getFullYear() &&
@@ -615,10 +614,16 @@ export default function AdminDashboard() {
         <div className="space-y-3">
           <div className="bg-zinc-800 p-3 rounded-lg">
             <div className="text-zinc-400 text-xs">
-              فروش {dateFilter === "today" ? "امروز" : 
-                    dateFilter === "yesterday" ? "دیروز" : 
-                    dateFilter === "week" ? "هفته" : 
-                    dateFilter === "month" ? "ماه" : "کل"}
+              فروش{" "}
+              {dateFilter === "today"
+                ? "امروز"
+                : dateFilter === "yesterday"
+                ? "دیروز"
+                : dateFilter === "week"
+                ? "هفته"
+                : dateFilter === "month"
+                ? "ماه"
+                : "کل"}
             </div>
             <div className="text-green-400 text-lg font-bold">
               {todaySales.toLocaleString()} تومان
@@ -626,10 +631,16 @@ export default function AdminDashboard() {
           </div>
           <div className="bg-zinc-800 p-3 rounded-lg">
             <div className="text-zinc-400 text-xs">
-              سفارشات {dateFilter === "today" ? "امروز" : 
-                       dateFilter === "yesterday" ? "دیروز" : 
-                       dateFilter === "week" ? "هفته" : 
-                       dateFilter === "month" ? "ماه" : "کل"}
+              سفارشات{" "}
+              {dateFilter === "today"
+                ? "امروز"
+                : dateFilter === "yesterday"
+                ? "دیروز"
+                : dateFilter === "week"
+                ? "هفته"
+                : dateFilter === "month"
+                ? "ماه"
+                : "کل"}
             </div>
             <div className="text-blue-400 text-lg font-bold">
               {filteredOrders.length}
@@ -638,7 +649,10 @@ export default function AdminDashboard() {
           <div className="bg-zinc-800 p-3 rounded-lg">
             <div className="text-zinc-400 text-xs">سفارشات در انتظار</div>
             <div className="text-yellow-400 text-lg font-bold">
-              {filteredOrders.filter(order => order.status === "PENDING").length}
+              {
+                filteredOrders.filter((order) => order.status === "PENDING")
+                  .length
+              }
             </div>
           </div>
         </div>
@@ -678,19 +692,36 @@ export default function AdminDashboard() {
                 <table className="w-full min-w-[800px]">
                   <thead className="bg-zinc-800">
                     <tr>
-                      <th className="text-right p-4 whitespace-nowrap">تاریخ ثبت</th>
-                      <th className="text-right p-4 whitespace-nowrap">شماره تماس</th>
-                      <th className="text-right p-4 whitespace-nowrap">وضعیت</th>
-                      <th className="text-right p-4 whitespace-nowrap">آدرس/میز</th>
-                      <th className="text-right p-4 whitespace-nowrap">قیمت کل</th>
-                      <th className="text-right p-4 whitespace-nowrap">آیتم‌ها</th>
-                      <th className="text-right p-4 whitespace-nowrap">عملیات</th>
+                      <th className="text-right p-4 whitespace-nowrap">
+                        تاریخ ثبت
+                      </th>
+                      <th className="text-right p-4 whitespace-nowrap">
+                        شماره تماس
+                      </th>
+                      <th className="text-right p-4 whitespace-nowrap">
+                        وضعیت
+                      </th>
+                      <th className="text-right p-4 whitespace-nowrap">
+                        آدرس/میز
+                      </th>
+                      <th className="text-right p-4 whitespace-nowrap">
+                        قیمت کل
+                      </th>
+                      <th className="text-right p-4 whitespace-nowrap">
+                        آیتم‌ها
+                      </th>
+                      <th className="text-right p-4 whitespace-nowrap">
+                        عملیات
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredOrders.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="p-8 text-center text-zinc-400">
+                        <td
+                          colSpan={7}
+                          className="p-8 text-center text-zinc-400"
+                        >
                           <div className="flex flex-col items-center gap-2">
                             <ShoppingCart size={48} className="text-zinc-600" />
                             <p>سفارشی در این بازه زمانی یافت نشد</p>
@@ -699,100 +730,117 @@ export default function AdminDashboard() {
                       </tr>
                     ) : (
                       filteredOrders.map((order) => (
-                      <tr key={order.id} className="border-b border-zinc-800">
-                        <td className="p-4">
-                          <div className="text-sm">
-                            {new Date(order.createdAt).toLocaleDateString("fa-IR", {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </div>
-                          <div className="text-xs text-zinc-400">
-                            {new Date(order.createdAt).toLocaleTimeString("fa-IR", {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center gap-2">
-                            <Phone size={16} className="text-zinc-400" />
-                            {order.phone}
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <select
-                            value={order.status}
-                            onChange={(e) =>
-                              updateOrderStatus(order.id, e.target.value)
-                            }
-                            className={`rounded-lg px-3 py-1 text-sm border-0 ${
-                              statusColors[
-                                order.status as keyof typeof statusColors
-                              ]
-                            }`}
-                          >
-                            <option value="PENDING">در انتظار</option>
-                            <option value="CONFIRMED">تایید شده</option>
-                            <option value="PREPARING">در حال آماده‌سازی</option>
-                            <option value="READY">آماده</option>
-                            <option value="DELIVERED">تحویل داده شد</option>
-                            <option value="CANCELLED">لغو شده</option>
-                          </select>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center gap-2">
-                            {order.orderType === "DELIVERY" ? (
-                              <>
-                                <MapPin size={16} className="text-zinc-400" />
-                                <span className="text-sm">{order.address}</span>
-                              </>
-                            ) : order.orderType === "DINE_IN" && order.table ? (
-                              <>
-                                <Package size={16} className="text-zinc-400" />
-                                <span className="text-sm">
-                                  میز {order.table.number}
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <Package size={16} className="text-zinc-400" />
-                                <span className="text-sm">تحویل حضوری</span>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                        <td className="p-4 font-medium text-green-400">
-                          {order.totalAmount.toLocaleString()} تومان
-                        </td>
-                        <td className="p-4">
-                          <div className="space-y-1">
-                            {order.items.map((item, idx) => (
-                              <div key={idx} className="text-sm">
-                                {item.quantity}× {item.name}
-                              </div>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="p-4">
-                          <div className="flex items-center gap-2">
-                            <Link
-                              href={`/dashboard/orders/${order.id}`}
-                              className="text-blue-400 hover:text-blue-300 text-sm px-2 py-1 rounded transition-colors"
+                        <tr key={order.id} className="border-b border-zinc-800">
+                          <td className="p-4">
+                            <div className="text-sm">
+                              {new Date(order.createdAt).toLocaleDateString(
+                                "fa-IR",
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </div>
+                            <div className="text-xs text-zinc-400">
+                              {new Date(order.createdAt).toLocaleTimeString(
+                                "fa-IR",
+                                {
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                }
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <Phone size={16} className="text-zinc-400" />
+                              {order.phone}
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <select
+                              value={order.status}
+                              onChange={(e) =>
+                                updateOrderStatus(order.id, e.target.value)
+                              }
+                              className={`rounded-lg px-3 py-1 text-sm border-0 ${
+                                statusColors[
+                                  order.status as keyof typeof statusColors
+                                ]
+                              }`}
                             >
-                              جزئیات
-                            </Link>
-                            <button
-                              onClick={() => deleteOrder(order.id)}
-                              className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded transition-colors flex items-center gap-1"
-                            >
-                              <Trash2 size={14} />
-                              حذف
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                              <option value="PENDING">در انتظار</option>
+                              <option value="CONFIRMED">تایید شده</option>
+                              <option value="PREPARING">
+                                در حال آماده‌سازی
+                              </option>
+                              <option value="READY">آماده</option>
+                              <option value="DELIVERED">تحویل داده شد</option>
+                              <option value="CANCELLED">لغو شده</option>
+                            </select>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              {order.orderType === "DELIVERY" ? (
+                                <>
+                                  <MapPin size={16} className="text-zinc-400" />
+                                  <span className="text-sm">
+                                    {order.address}
+                                  </span>
+                                </>
+                              ) : order.orderType === "DINE_IN" &&
+                                order.table ? (
+                                <>
+                                  <Package
+                                    size={16}
+                                    className="text-zinc-400"
+                                  />
+                                  <span className="text-sm">
+                                    میز {order.table.number}
+                                  </span>
+                                </>
+                              ) : (
+                                <>
+                                  <Package
+                                    size={16}
+                                    className="text-zinc-400"
+                                  />
+                                  <span className="text-sm">تحویل حضوری</span>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-4 font-medium text-green-400">
+                            {order.totalAmount.toLocaleString()} تومان
+                          </td>
+                          <td className="p-4">
+                            <div className="space-y-1">
+                              {order.items.map((item, idx) => (
+                                <div key={idx} className="text-sm">
+                                  {item.quantity}× {item.name}
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <Link
+                                href={`/dashboard/orders/${order.id}`}
+                                className="text-blue-400 hover:text-blue-300 text-sm px-2 py-1 rounded transition-colors"
+                              >
+                                جزئیات
+                              </Link>
+                              <button
+                                onClick={() => deleteOrder(order.id)}
+                                className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded transition-colors flex items-center gap-1"
+                              >
+                                <Trash2 size={14} />
+                                حذف
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
                       ))
                     )}
                   </tbody>

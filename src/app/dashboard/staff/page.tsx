@@ -58,7 +58,6 @@ export default function StaffDashboard() {
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const router = useRouter();
 
-   
   const fetchOrders = useCallback(async () => {
     try {
       const response = await fetch("/api/orders");
@@ -73,7 +72,6 @@ export default function StaffDashboard() {
     } finally {
       setLoading(false);
     }
-
   }, [router]);
 
   useEffect(() => {

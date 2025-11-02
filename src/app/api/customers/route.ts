@@ -25,23 +25,26 @@ export async function GET(request: NextRequest) {
             { name: { contains: search } },
             { lastName: { contains: search } },
             { phone: { contains: search } },
-            { membershipCode: { contains: search } }
-          ]
+            { membershipCode: { contains: search } },
+          ],
         },
         orderBy: { createdAt: "desc" },
-        take: 10
+        take: 10,
       });
     } else {
       customers = await prisma.customer.findMany({
         orderBy: { createdAt: "desc" },
-        take: 50
+        take: 50,
       });
     }
 
     return NextResponse.json(customers);
   } catch (error) {
     console.error("Get customers error:", error);
-    return NextResponse.json({ error: "خطا در دریافت مشتریان" }, { status: 500 });
+    return NextResponse.json(
+      { error: "خطا در دریافت مشتریان" },
+      { status: 500 }
+    );
   }
 }
 
@@ -60,16 +63,22 @@ export async function POST(request: NextRequest) {
     const { name, lastName, phone, address } = await request.json();
 
     if (!name || !phone) {
-      return NextResponse.json({ error: "نام و شماره تماس الزامی است" }, { status: 400 });
+      return NextResponse.json(
+        { error: "نام و شماره تماس الزامی است" },
+        { status: 400 }
+      );
     }
 
     // Check if phone already exists
     const existingCustomer = await prisma.customer.findUnique({
-      where: { phone }
+      where: { phone },
     });
 
     if (existingCustomer) {
-      return NextResponse.json({ error: "این شماره تماس قبلاً ثبت شده" }, { status: 400 });
+      return NextResponse.json(
+        { error: "این شماره تماس قبلاً ثبت شده" },
+        { status: 400 }
+      );
     }
 
     const customer = await prisma.customer.create({
@@ -78,8 +87,8 @@ export async function POST(request: NextRequest) {
         lastName: lastName || "",
         phone,
         address: address || "",
-        membershipCode: `C${Date.now()}` // Generate membership code
-      }
+        membershipCode: `C${Date.now()}`, // Generate membership code
+      },
     });
 
     return NextResponse.json(customer, { status: 201 });
