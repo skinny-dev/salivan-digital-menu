@@ -44,7 +44,7 @@ function TabsTrigger({
       data-slot="tabs-trigger"
       className={cn(
         "w-28 flex-none px-4 py-2 text-center border-b-2 border-transparent cursor-pointer text-sm font-medium whitespace-nowrap",
-        "data-[state=active]:border-b-green-400 text-foreground dark:text-muted-foreground",
+        "data-[state=active]:border-b-orange-400 text-foreground dark:text-muted-foreground",
         className
       )}
       {...props}

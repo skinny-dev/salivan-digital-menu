@@ -90,7 +90,7 @@ export default function TabsExample() {
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="flex flex-row items-center justify-between rounded-2xl bg-zinc-900 p-4 gap-4 shadow-none"
+              className="flex flex-row items-center justify-between rounded-2xl bg-orange-950/20 p-4 gap-4 shadow-none"
             >
               {/* Image skeleton - exact same size */}
               <Skeleton className="rounded-full border-2 border-[#232323] w-[80px] h-[80px] flex-shrink-0" />
@@ -152,7 +152,7 @@ export default function TabsExample() {
             {tab.items.map((item, idx) => (
               <div
                 key={idx}
-                className="flex flex-row items-center justify-between rounded-2xl bg-zinc-900 p-4 gap-4 shadow-none"
+                className="flex flex-row items-center justify-between rounded-2xl bg-orange-950/20 p-4 gap-4 shadow-none"
               >
                 {/* Image */}
                 <LoadingImage
