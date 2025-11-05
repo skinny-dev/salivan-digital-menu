@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import QRCodeStyling from "qr-code-styling";
 
 type Props = {
@@ -7,8 +7,16 @@ type Props = {
   size?: number;
 };
 
-export default function StyledQr({ data = "http://fastfood-salivan.ir/", size = 240 }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+export type StyledQrHandle = {
+  downloadSvg: (name?: string, pxSize?: number) => void;
+};
+
+function StyledQrInner(
+  { data = "http://fastfood-salivan.ir/", size = 240 }: Props,
+  handleRef: React.Ref<StyledQrHandle>
+) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const qrRef = useRef<QRCodeStyling | null>(null);
 
   useEffect(() => {
     const qr = new QRCodeStyling({
@@ -40,9 +48,10 @@ export default function StyledQr({ data = "http://fastfood-salivan.ir/", size = 
       },
     });
 
-    if (ref.current) {
-      ref.current.innerHTML = "";
-      qr.append(ref.current);
+    qrRef.current = qr;
+    if (containerRef.current) {
+      containerRef.current.innerHTML = "";
+      qr.append(containerRef.current);
     }
 
     return () => {
@@ -50,9 +59,24 @@ export default function StyledQr({ data = "http://fastfood-salivan.ir/", size = 
     };
   }, [data, size]);
 
+  useImperativeHandle(handleRef, () => ({
+    downloadSvg: (name = "salivan-qr", pxSize = 2000) => {
+      const qr = qrRef.current;
+      if (!qr) return;
+      // enlarge for export, then revert
+      qr.update({ width: pxSize, height: pxSize });
+      qr.download({ name, extension: "svg" });
+      // revert to display size
+      setTimeout(() => qr.update({ width: size, height: size }), 0);
+    },
+  }));
+
   return (
     <div className="inline-block rounded-2xl bg-white p-3 shadow-sm">
-      <div ref={ref} />
+  <div ref={containerRef} />
     </div>
   );
 }
+
+const StyledQr = forwardRef(StyledQrInner);
+export default StyledQr;
