@@ -1,5 +1,6 @@
 declare module "qr-code-styling" {
   export interface QRCodeStylingOptions {
+    type?: "svg" | "canvas";
     width?: number;
     height?: number;
     data: string;

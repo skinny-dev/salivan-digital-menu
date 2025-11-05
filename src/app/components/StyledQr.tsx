@@ -20,6 +20,7 @@ function StyledQrInner(
 
   useEffect(() => {
     const qr = new QRCodeStyling({
+      type: "svg",
       width: size,
       height: size,
       data,
@@ -63,11 +64,21 @@ function StyledQrInner(
     downloadSvg: (name = "salivan-qr", pxSize = 2000) => {
       const qr = qrRef.current;
       if (!qr) return;
-      // enlarge for export, then revert
+      // For consistent styled SVG, request raw data and trigger a download
+      // Temporarily update dimensions for export, then revert
       qr.update({ width: pxSize, height: pxSize });
-      qr.download({ name, extension: "svg" });
-      // revert to display size
-      setTimeout(() => qr.update({ width: size, height: size }), 0);
+      qr.getRawData("svg").then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${name}.svg`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        // revert display size asynchronously
+        setTimeout(() => qr.update({ width: size, height: size }), 0);
+      });
     },
   }));
 
