@@ -33,10 +33,10 @@ export default function StyledQr({ data = "http://fastfood-salivan.ir/", size = 
         type: "extra-rounded",
         color: "#000000",
       },
-      // Hide the inner corner dot per spec
+      // Ensure proper finder pattern (dark-light-dark)
       cornersDotOptions: {
         type: "dot",
-        color: "transparent",
+        color: "#000000",
       },
     });
 
