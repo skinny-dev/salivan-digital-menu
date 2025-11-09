@@ -9,8 +9,9 @@ export default function Home() {
   const mapsUrl =
     "https://maps.google.com/maps?q=35.608100,51.308674&ll=35.608100,51.308674&z=16";
   const phoneNumbers = [
-    { label: "09122995956", href: "tel:+989122995956" },
     { label: "09122568011", href: "tel:+989122568011" },
+    { label: "09122995956", href: "tel:+989122995956" },
+    { label: "02155265100", href: "tel:+982155265100" },
   ];
   return (
     <div dir="rtl" className="font-sans bg-background">
