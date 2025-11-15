@@ -9,13 +9,26 @@ import { resolveMenuImageSrc } from "./lib/utils";
 // Define a type for spreadsheet rows
 type MenuItem = Record<string, string>;
 
+// Helper to read from multiple possible column names
+function getField(row: MenuItem, keys: string[]): string {
+  for (const k of keys) {
+    const v = (row[k] ?? "").toString().trim();
+    if (v) return v;
+  }
+  return "";
+}
+
 // Group by icon+name
 function groupByCategory(items: MenuItem[]): Record<string, MenuItem[]> {
   const groups: Record<string, MenuItem[]> = {};
   items.forEach((item) => {
     // Use both trimmed icon and name as key, trimming whitespace
-    const icon = (item["آیکون دست بندی"] || "").trim();
-    const name = (item["نام دسته بندی"] || "").trim();
+    const icon = getField(item, [
+      "آیکون دسته‌بندی",
+      "آیکون دسته بندی",
+      "آیکون دست بندی",
+    ]);
+    const name = getField(item, ["نام دسته‌بندی", "نام دسته بندی"]);
     const key = `${icon}|${name}`;
     if (!groups[key]) groups[key] = [];
     groups[key].push(item);
@@ -163,17 +176,20 @@ export default function TabsExample() {
           dir="rtl"
           className="p-2"
         >
-          <div className="p-5 flex items-center justify-between">
+          <div className="p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
             <div className="text-[white] text-xl font-bold flex items-center gap-2">
               <span>{tab.name}</span>
               <span className="text-2xl">{tab.icon}</span>
             </div>
             {tab.hasSpecial && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 md:ml-auto">
                 <span className="text-xs md:text-sm text-orange-300 bg-orange-500/10 border border-orange-500/30 rounded-full px-3 py-1 whitespace-nowrap">
-                  قارچ و پنیر + {tab.specialPrice
-                    ? `${Number(tab.specialPrice).toLocaleString("fa-IR")} هزار تومان`
-                    : "قیمت ویژه"}
+                  {typeof tab.specialPrice === "number" &&
+                  !Number.isNaN(tab.specialPrice)
+                    ? `ویژه + ${Number(tab.specialPrice).toLocaleString(
+                        "fa-IR"
+                      )} تومان`
+                    : "با قارچ و پنیر"}
                 </span>
               </div>
             )}
@@ -187,7 +203,7 @@ export default function TabsExample() {
                 {/* Image */}
                 <LoadingImage
                   src={resolveMenuImageSrc(item["تصویر"])}
-                  alt={item["عنوان"]}
+                  alt={getField(item, ["عنوان"]) || ""}
                   width={80}
                   height={80}
                   className="rounded-full border-2 border-[#232323] object-cover w-[80px] h-[80px]"
@@ -195,14 +211,20 @@ export default function TabsExample() {
                 {/* Text content */}
                 <div className="flex flex-col flex-1 gap-1 items-start text-start">
                   <span className="text-base font-bold text-white mb-1">
-                    {item["عنوان"]}
+                    {getField(item, ["عنوان"])}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {item["رسپی"]}
+                    {getField(item, ["رسپی"])}
                   </span>
                   <div className="flex justify-start w-full">
                     <span className="text-orange-400 font-bold text-lg mb-1">
-                      {Number(item["قیمت"]).toLocaleString("fa-IR")} تومان
+                      {(() => {
+                        const raw = getField(item, ["قیمت", "قیمت (تومان)"]);
+                        const num = Number(raw.replace(/[^\d.]/g, ""));
+                        return isNaN(num)
+                          ? raw
+                          : `${num.toLocaleString("fa-IR")} تومان`;
+                      })()}
                     </span>
                   </div>
                 </div>

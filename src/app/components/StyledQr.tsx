@@ -62,23 +62,27 @@ function StyledQrInner(
 
   useImperativeHandle(handleRef, () => ({
     downloadSvg: (name = "salivan-qr", pxSize = 2000) => {
-      const qr = qrRef.current;
-      if (!qr) return;
-      // For consistent styled SVG, request raw data and trigger a download
-      // Temporarily update dimensions for export, then revert
-      qr.update({ width: pxSize, height: pxSize });
-      qr.getRawData("svg").then((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${name}.svg`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        // revert display size asynchronously
-        setTimeout(() => qr.update({ width: size, height: size }), 0);
-      });
+      // Export exactly what is rendered by cloning the SVG node from the DOM
+      const host = containerRef.current;
+      if (!host) return;
+      const svg = host.querySelector('svg');
+      if (!svg) return;
+
+      const cloned = svg.cloneNode(true) as SVGElement;
+      // Force export size while keeping viewBox for vector fidelity
+      cloned.setAttribute('width', String(pxSize));
+      cloned.setAttribute('height', String(pxSize));
+
+      const source = new XMLSerializer().serializeToString(cloned);
+      const blob = new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${name}.svg`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     },
   }));
 
