@@ -28,7 +28,14 @@ const SHEET_CSV_URL =
 
 export default function TabsExample() {
   const [tabs, setTabs] = useState<
-    { icon: string; name: string; value: string; items: MenuItem[] }[]
+    {
+      icon: string;
+      name: string;
+      value: string;
+      items: MenuItem[];
+      hasSpecial?: boolean;
+      specialPrice?: number;
+    }[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,11 +52,23 @@ export default function TabsExample() {
         const grouped = groupByCategory(items);
         const tabArr = Object.entries(grouped).map(([cat, items], idx) => {
           const [icon, name] = cat.split("|");
+          // Detect special (ویژه) capability and read special price (قیمت ویژه)
+          const specialItems = items.filter(
+            (it) => (it["ویژه"] || "").toString().trim() === "1"
+          );
+          const specialPriceRaw = specialItems.find(
+            (it) => (it["قیمت ویژه"] || "").toString().trim() !== ""
+          )?.["قیمت ویژه"]; // may be like 60
+          const specialPrice = specialPriceRaw
+            ? Number((specialPriceRaw as string).replace(/[^\d.]/g, ""))
+            : undefined;
           return {
             icon,
             name,
             value: `tab${idx}`,
             items,
+            hasSpecial: specialItems.length > 0,
+            specialPrice,
           };
         });
         setTabs(tabArr);
@@ -144,9 +163,20 @@ export default function TabsExample() {
           dir="rtl"
           className="p-2"
         >
-          <div className="text-[white] text-xl font-bold p-5 flex items-center gap-2">
-            <span>{tab.name}</span>
-            <span className="text-2xl">{tab.icon}</span>
+          <div className="p-5 flex items-center justify-between">
+            <div className="text-[white] text-xl font-bold flex items-center gap-2">
+              <span>{tab.name}</span>
+              <span className="text-2xl">{tab.icon}</span>
+            </div>
+            {tab.hasSpecial && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs md:text-sm text-orange-300 bg-orange-500/10 border border-orange-500/30 rounded-full px-3 py-1 whitespace-nowrap">
+                  قارچ و پنیر + {tab.specialPrice
+                    ? `${Number(tab.specialPrice).toLocaleString("fa-IR")} هزار تومان`
+                    : "قیمت ویژه"}
+                </span>
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {tab.items.map((item, idx) => (
