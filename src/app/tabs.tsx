@@ -189,7 +189,7 @@ export default function TabsExample() {
                     ? `ویژه + ${Number(tab.specialPrice).toLocaleString(
                         "fa-IR"
                       )} تومان`
-                    : "با قارچ و پنیر"}
+                    : "با قارچ و پنیر + 50 هزار تومان"}
                 </span>
               </div>
             )}
